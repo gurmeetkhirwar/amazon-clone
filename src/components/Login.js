@@ -1,19 +1,35 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "../static/css/Login.css";
+import { auth } from "../firebase";
 
 function Login() {
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const history = useHistory();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const signIn = (event) => {
     event.preventDefault();
-  }
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((auth) => {
+        history.push("/");
+      })
+      .catch((error) => alert(error.message));
+  };
 
   const register = (event) => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((auth) => {
+        if (auth) {
+          history.push("/");
+        }
+        console.log(auth);
+      })
+      .catch((error) => alert(error.message));
+  };
   return (
     <div className="login">
       <Link to="/">
@@ -27,10 +43,24 @@ function Login() {
         <h1>Sign-in</h1>
         <form>
           <h5>E-mail</h5>
-          <input type="text" value={email} onChange={event=>setEmail(event.target.value)} />
+          <input
+            type="text"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
           <h5>Password</h5>
-          <input type="password" value={password} onChange={event=>setPassword(event.target.value)} />
-          <button type='submit' className="login__signInButton" onSubmit={signIn}>Sign In</button>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <button
+            type="submit"
+            className="login__signInButton"
+            onClick={signIn}
+          >
+            Sign In
+          </button>
         </form>
         <p>
           By signing-in you agree to the AMAZON FAKE CLONE Conditions of Use &
